@@ -5,7 +5,12 @@ from django.conf.urls.static import static
 from users import views as user_view
 from users import views
 from django.contrib.auth import views as auth
-
+from django.contrib.auth.views import (
+    PasswordResetView, 
+    PasswordResetDoneView, 
+    PasswordResetConfirmView,
+    PasswordResetCompleteView
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +32,10 @@ urlpatterns = [
     path('register/', user_view.register, name ='register'),
     path('evaluation/' , user_view.evaluation , name='evaluation'),
     path('create_evaluation/' , user_view.create_evaluation , name='create_evaluation'),
+    path('password_reset/', PasswordResetView.as_view(template_name='user/password_reset_form.html'),name='password_reset'),
+    path('password_reset/done/', PasswordResetDoneView.as_view(template_name='user/password_reset_done.html'),name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(template_name='user/password_reset_confirm.html'),name='password_reset_confirm'),
+    path('password_reset_complete/',PasswordResetCompleteView.as_view(template_name='user/password_reset_complete.html'),name='password_reset_complete')
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
