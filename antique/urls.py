@@ -25,6 +25,8 @@ urlpatterns = [
     path('login/', user_view.Login, name ='login'),
     path('logout/', auth.LogoutView.as_view(template_name ='index.html'), name ='logout'),
     path('register/', user_view.register, name ='register'),
+    path('evaluation/' , user_view.evaluation , name='evaluation'),
+    path('create_evaluation/' , user_view.create_evaluation , name='create_evaluation'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
