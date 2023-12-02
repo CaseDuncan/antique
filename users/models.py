@@ -37,6 +37,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin ):
     email = models.EmailField(max_length=100, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'

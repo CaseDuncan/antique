@@ -1,10 +1,12 @@
+import json
 from django.shortcuts import render
 from django.http import HttpResponse
 from users.forms import EvaluationRequestForm
 import os
 from twilio.rest import Client
 # Create your views here.
-from django.shortcuts import render, redirect
+
+from django.shortcuts import render, redirect , get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -70,34 +72,29 @@ def create_evaluation(request):
             evaluation_request = form.save(commit=False)
             evaluation_request.user = request.user
             evaluation_request.save()
-
             # Evaluation.objects.create(user_id = user.id , comment = form.cleaned_data.get('comment') , contact_method = form.cleaned_data.get('contact_method') , antique_img=request.FILES)
             return HttpResponse("form submited thanks")     
 
     else:
         form = EvaluationRequestForm()
         return render(request, "evaluation/request_evaluation.html", {"form": form})
-    
+
+@login_required
 def verification_view(request):
+    errMsg = ""
     form = VerificationCodeForm(request.POST or None)
-    user = request.user
-    print(user.id)
+    user = request.user 
+    body_unicode = request.body.decode('utf-8')
+    if request.POST:
+        code = body_unicode.split('&')[1].split("=")[1]
+        verifCode = VerificationCode.objects.get(user_id=user.id)
+        if verifCode.code == code:
+            editUser = CustomUser.objects.get(id=user.id)
+            editUser.is_verified = True
+            editUser.save()
+            return redirect("/evaluation")
+        else:
 
-    # if user:
-    #     user = CustomUser.objects.get(id=user.id)
-    #     code = user.code
-    #     code_user = f"{user.username}: {code}"
-
-    #     if not request.POST:
-    #         #send SMS
-    #         print(code_user)
-    #         send_SMS(code_user, user.phone_number)
-    #     if form.is_valid():
-    #             verification_code = form.cleaned_data.get('code')
-    #             if str(code) == verification_code:
-    #                 code.save()
-    #                 login(request, user)
-    #                 return redirect('/submit_evaluation')
-    #             else:
-    #                 return redirect('/login/')    
-    return render(request, 'verify.html', {'form': form})
+            errMsg = "Incorrect Verification Code"
+   
+    return render(request, 'verify.html', {'form': form , 'errMsg' : errMsg})
