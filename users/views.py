@@ -9,8 +9,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm 
-from users.models import Evaluation
+from users.models import Evaluation , CustomUser , VerificationCode
 from .forms import UserRegisterForm , VerificationCodeForm
+from .utils import send_SMS
 
 
 #################### index####################################### 
@@ -45,6 +46,9 @@ def Login(request):
         if user is not None:
             form = login(request, user)
             messages.success(request, f'Welcome {username} !!')
+            userId = request.user.id
+            verificationCodeRecord = VerificationCode.objects.get(user_id = userId)
+            send_SMS(verification_code=verificationCodeRecord.code , phone_number='+254758262427')
             return redirect('/verify')
         else:
             messages.info(request, 'Account does not exist, please sign in')
@@ -76,16 +80,18 @@ def create_evaluation(request):
     
 def verification_view(request):
     form = VerificationCodeForm(request.POST or None)
-    # pk = request.session.get('pk')
-    # if pk:
-    #     user = User.objects.get(pk=pk)
+    user = request.user
+    print(user.id)
+
+    # if user:
+    #     user = CustomUser.objects.get(id=user.id)
     #     code = user.code
     #     code_user = f"{user.username}: {code}"
 
     #     if not request.POST:
     #         #send SMS
     #         print(code_user)
-    #         # send_SMS(code_user, user.phone_number)
+    #         send_SMS(code_user, user.phone_number)
     #     if form.is_valid():
     #             verification_code = form.cleaned_data.get('code')
     #             if str(code) == verification_code:
