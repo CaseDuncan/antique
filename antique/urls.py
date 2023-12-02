@@ -24,7 +24,7 @@ urlpatterns = [
     # path('password_reset_complete/',PasswordResetCompleteView.as_view(template_name='user/password_reset_complete.html'),name='password_reset_complete'),
     # path('evaluation/' , evaluation , name='evaluation'),
     # path('create_evaluation/' , create_evaluation , name='create_evaluation'),
-    # path('listings/' , evaluation_listings , name='listings'),
+   
 
     path('', views.index, name ='index'),
     path('login/', user_view.Login, name ='login'),
@@ -37,6 +37,7 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(template_name='user/password_reset_confirm.html'),name='password_reset_confirm'),
     path('password_reset_complete/',PasswordResetCompleteView.as_view(template_name='user/password_reset_complete.html'),name='password_reset_complete'),
     path('verify/', user_view.verification_view, name='verify'),
+    path('listings/' , user_view.evaluation_listings , name='listings'),
 ]
 
 if settings.DEBUG:

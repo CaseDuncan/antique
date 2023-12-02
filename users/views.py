@@ -44,7 +44,8 @@ def Login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        print(user)
+        print(user.is_verified)
+
         if user is not None:
             form = login(request, user)
             messages.success(request, f'Welcome {username} !!')
@@ -73,7 +74,7 @@ def create_evaluation(request):
             evaluation_request.user = request.user
             evaluation_request.save()
             # Evaluation.objects.create(user_id = user.id , comment = form.cleaned_data.get('comment') , contact_method = form.cleaned_data.get('contact_method') , antique_img=request.FILES)
-            return HttpResponse("form submited thanks")     
+            return redirect('/create_evaluation')    
 
     else:
         form = EvaluationRequestForm()
@@ -85,6 +86,9 @@ def verification_view(request):
     form = VerificationCodeForm(request.POST or None)
     user = request.user 
     body_unicode = request.body.decode('utf-8')
+    checkIfUserIsVerified = CustomUser.objects.get(id=user.id)
+    if checkIfUserIsVerified.is_verified:
+        return redirect("/evaluation")
     if request.POST:
         code = body_unicode.split('&')[1].split("=")[1]
         verifCode = VerificationCode.objects.get(user_id=user.id)
@@ -98,3 +102,8 @@ def verification_view(request):
             errMsg = "Incorrect Verification Code"
    
     return render(request, 'verify.html', {'form': form , 'errMsg' : errMsg})
+
+@login_required
+def evaluation_listings(request):
+    listings = Evaluation.objects.all()
+    return render(request , 'evaluation/evaluation_listing.html' ,{'listings' : listings})
