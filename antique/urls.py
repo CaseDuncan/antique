@@ -13,6 +13,7 @@ from django.contrib.auth.views import (
 )
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
     # path('', login_request, name='login'),
     # path('verify/', verification_view, name='verify'),
@@ -25,7 +26,6 @@ urlpatterns = [
     # path('create_evaluation/' , create_evaluation , name='create_evaluation'),
     # path('listings/' , evaluation_listings , name='listings'),
 
-
     path('', views.index, name ='index'),
     path('login/', user_view.Login, name ='login'),
     path('logout/', auth.LogoutView.as_view(template_name ='index.html'), name ='logout'),
@@ -35,7 +35,9 @@ urlpatterns = [
     path('password_reset/', PasswordResetView.as_view(template_name='user/password_reset_form.html'),name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(template_name='user/password_reset_done.html'),name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(template_name='user/password_reset_confirm.html'),name='password_reset_confirm'),
-    path('password_reset_complete/',PasswordResetCompleteView.as_view(template_name='user/password_reset_complete.html'),name='password_reset_complete')
+    path('password_reset_complete/',PasswordResetCompleteView.as_view(template_name='user/password_reset_complete.html'),name='password_reset_complete'),
+    path('verify/', user_view.verification_view, name='verify'),
 ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
